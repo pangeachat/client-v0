@@ -1,0 +1,20 @@
+name: build-and-deploy
+on:
+  push:
+    branches: [ init-ci ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: cirrusci/flutter:3.0.5
+    steps:
+      - uses: actions/checkout@v3
+      - run: |
+          sudo apt update && sudo apt install curl -y
+          chmod -R 0777 scripts
+      - run: ./scripts/prepare-web.sh
+      - run: ./scripts/build-web.sh
+      - uses: actions/upload-artifact@v3
+        with:
+          name: webapp
+          path: ./build/web
